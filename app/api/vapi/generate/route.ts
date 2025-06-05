@@ -9,7 +9,12 @@ export async function GET() {
 
 export async function POST(request:Request) {
     const {type, role, level, techstack, amount, userid } = await request.json();
-
+    const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json',
+  };
     try{
         const { text:questions } = await generateText({
             model: google('gemini-2.0-flash-001'),
@@ -33,9 +38,9 @@ export async function POST(request:Request) {
 
             await db.collection('interviews').add(interview);
 
-            return Response.json({success:true}, {status:200})
+            return Response.json({success:true}, {status:200, headers})
     }catch(error){
         console.log(error);
-        return Response.json({success: false, error}, {status: 500});
+        return Response.json({success: false, error}, {status: 500, headers});
     }
 }
